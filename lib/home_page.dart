@@ -15,41 +15,32 @@ class _HomePageState extends State<HomePage> {
   int _questionIndex = 0;
   int _selectedIndex = -1;
   int _trueIndex = -1;
+  int _falseIndex = -1;
 
   void _checkAnswer() {
-    switch (_selectedIndex) {
-      case 0:
-        if (questions[_questionIndex].variantTrue ==
-            questions[_questionIndex].variantA) {
-          setState(() {
-            _trueIndex = 0;
-          });
-        }
-        break;
-      case 1:
-        if (questions[_questionIndex].variantTrue ==
-            questions[_questionIndex].variantB) {
-          setState(() {
-            _trueIndex = 1;
-          });
-        }
-        break;
-      case 2:
-        if (questions[_questionIndex].variantTrue ==
-            questions[_questionIndex].variantC) {
-          setState(() {
-            _trueIndex = 2;
-          });
-        }
-        break;
-      default:
-        if (questions[_questionIndex].variantTrue ==
-            questions[_questionIndex].variantD) {
-          setState(() {
-            _trueIndex = 3;
-          });
-        }
-        break;
+    if (questions[_questionIndex].variantTrue ==
+        questions[_questionIndex].variantA) {
+      setState(() {
+        _trueIndex = 0;
+        _falseIndex = _selectedIndex;
+      });
+    } else if (questions[_questionIndex].variantTrue ==
+        questions[_questionIndex].variantB) {
+      setState(() {
+        _trueIndex = 1;
+        _falseIndex = _selectedIndex;
+      });
+    } else if (questions[_questionIndex].variantTrue ==
+        questions[_questionIndex].variantC) {
+      setState(() {
+        _trueIndex = 2;
+        _falseIndex = _selectedIndex;
+      });
+    } else {
+      setState(() {
+        _trueIndex = 3;
+        _falseIndex = _selectedIndex;
+      });
     }
   }
 
@@ -111,10 +102,12 @@ class _HomePageState extends State<HomePage> {
                   },
                   isSelected: _selectedIndex == 0,
                   isTrue: _trueIndex == 0,
+                  isFalse: _falseIndex == 0,
                 ),
                 const SizedBox(height: 20),
                 VariantButton(
                   isSelected: _selectedIndex == 1,
+                  isFalse: _falseIndex == 1,
                   isTrue: _trueIndex == 1,
                   name: questions[_questionIndex].variantB,
                   onTap: () {
@@ -127,6 +120,7 @@ class _HomePageState extends State<HomePage> {
                 VariantButton(
                   isSelected: _selectedIndex == 2,
                   isTrue: _trueIndex == 2,
+                  isFalse: _falseIndex == 2,
                   name: questions[_questionIndex].variantC,
                   onTap: () {
                     setState(() {
@@ -137,6 +131,7 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 20),
                 VariantButton(
                   isSelected: _selectedIndex == 3,
+                  isFalse: _falseIndex == 3,
                   isTrue: _trueIndex == 3,
                   name: questions[_questionIndex].variantD,
                   onTap: () {
@@ -151,18 +146,32 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.only(bottom: 20.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: (_selectedIndex != -1 && _trueIndex != -1)
+                      ? Colors.indigo
+                      : Colors.green,
                   minimumSize: const Size.fromHeight(56),
                 ),
                 onPressed: () {
+                  if (_selectedIndex != -1 && _trueIndex != -1) {
+                    setState(() {
+                      _questionIndex++;
+                      _selectedIndex = -1;
+                      _trueIndex = -1;
+                      _falseIndex = -1;
+                    });
+                    return;
+                  }
+
                   if (_selectedIndex < 0) {
                     return;
                   }
                   _checkAnswer();
                 },
                 child: Text(
-                  'Submit',
-                  style: TextStyle(
+                  (_selectedIndex != -1 && _trueIndex != -1)
+                      ? 'Go to the next question'
+                      : 'Submit',
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,

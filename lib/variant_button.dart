@@ -5,6 +5,7 @@ class VariantButton extends StatelessWidget {
   final Function() onTap;
   final bool isSelected;
   final bool isTrue;
+  final bool isFalse;
 
   const VariantButton({
     super.key,
@@ -12,6 +13,7 @@ class VariantButton extends StatelessWidget {
     required this.onTap,
     required this.isSelected,
     required this.isTrue,
+    required this.isFalse,
   });
 
   @override
@@ -20,7 +22,7 @@ class VariantButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: isTrue ? Colors.green : Colors.white,
+          color: isTrue ? Colors.green : (isFalse ? Colors.red : Colors.white),
           borderRadius: BorderRadius.circular(6),
           border: isTrue
               ? null
