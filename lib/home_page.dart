@@ -1,4 +1,5 @@
 import 'package:flagquizapp/question.dart';
+import 'package:flagquizapp/result_page.dart';
 import 'package:flagquizapp/variant_button.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = -1;
   int _trueIndex = -1;
   int _falseIndex = -1;
+  int _trueCount = 0;
 
   void _checkAnswer() {
     if (questions[_questionIndex].variantTrue ==
@@ -41,6 +43,9 @@ class _HomePageState extends State<HomePage> {
         _trueIndex = 3;
         _falseIndex = _selectedIndex;
       });
+    }
+    if (_trueIndex == _selectedIndex) {
+      _trueCount++;
     }
   }
 
@@ -146,13 +151,25 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.only(bottom: 20.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: (_selectedIndex != -1 && _trueIndex != -1)
+                  backgroundColor: (_questionIndex == questions.length - 1 &&
+                          ((_selectedIndex != -1 && _trueIndex != -1)))
                       ? Colors.indigo
-                      : Colors.green,
+                      : (_selectedIndex != -1 && _trueIndex != -1
+                          ? Colors.indigo
+                          : Colors.green),
                   minimumSize: const Size.fromHeight(56),
                 ),
                 onPressed: () {
                   if (_selectedIndex != -1 && _trueIndex != -1) {
+                    if (_questionIndex == questions.length - 1) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ResultPage(score: _trueCount),
+                        ),
+                      );
+                      return;
+                    }
                     setState(() {
                       _questionIndex++;
                       _selectedIndex = -1;
@@ -168,9 +185,12 @@ class _HomePageState extends State<HomePage> {
                   _checkAnswer();
                 },
                 child: Text(
-                  (_selectedIndex != -1 && _trueIndex != -1)
-                      ? 'Go to the next question'
-                      : 'Submit',
+                  (_questionIndex == questions.length - 1 &&
+                          ((_selectedIndex != -1 && _trueIndex != -1)))
+                      ? 'Finish'
+                      : ((_selectedIndex != -1 && _trueIndex != -1)
+                          ? 'Go to the next question'
+                          : 'Submit'),
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
